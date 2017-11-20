@@ -5,7 +5,7 @@ import sys, socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 host = ''  # could instead pass in '' in bind tuple
-port = int(sys.argv[1])
+port = int(sys.argv[1])  #LIMIT TO CERTAIN RANGE INSTEAD OF ACCEPTING INPUT?
 sock.bind((host, port))  # passing tuple as single argument
 
 # accept call from client
@@ -42,3 +42,5 @@ while(len(csock) > 0):
 
 sock.close()
 print 'Initialization Total is ', IT
+
+def disconnect()
