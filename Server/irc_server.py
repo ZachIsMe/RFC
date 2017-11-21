@@ -43,4 +43,6 @@ while(len(csock) > 0):
 sock.close()
 print 'Initialization Total is ', IT
 
-def disconnect()
+def disconnect(clientList)
+    for c in clientList
+        if
