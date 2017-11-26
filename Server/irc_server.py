@@ -1,5 +1,5 @@
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-import sys, socket
+import sys,socket,os,signal,shutil
 
 # socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,6 +42,17 @@ while(len(csock) > 0):
 
 sock.close()
 print 'Initialization Total is ', IT
+
+
+def shutdown(self):
+    os.kill(self.child_pid, signal.SIGTERM)
+    os.waitpid(self.child_pid, 0)
+    if self.state_dir:
+        try:
+            shutil.rmtree(self.state_dir)
+        except IOError:
+            pass
+
 
 def disconnect(clientList)
     for c in clientList
