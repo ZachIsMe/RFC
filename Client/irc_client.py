@@ -1,11 +1,12 @@
 import sys
 import socket
+import threading
 import string
 import argparse
 import logging
 
 
-class irc_client():
+class IRCClient:
 
     irc = socket.socket()
 
@@ -21,7 +22,7 @@ class irc_client():
             ircmsg = ircmsg.strip('\n\r')
             print (ircmsg)
 
-    #Objective #6
+    # Objective #6
     def connect(self, host, port, channel, name, log):
         try:
             self.irc.connect((host, port))
@@ -37,7 +38,7 @@ class irc_client():
     def send(self, channel, message):
         self.irc.send("PRIVMSG " + channel + " " + message +"n")
 
-    #Objective #10
+    # Objective #10
     def sendmsg(self, msg, channel):
         self.irc.send(("PRIVMSG "+ channel +" :"+msg+"\n").encode("UTF-8"))
 
@@ -50,11 +51,11 @@ class irc_client():
 #    def leaveRoom(self, channel, name):
 #    def listMembersInChan(self, channel):
 
-    #Objective #13
+    # Objective #13
 #    def disconnect(self):
 
 
-    #Objective 16
+    # Objective 16
 #    def Heartbeat(self):
 
 
