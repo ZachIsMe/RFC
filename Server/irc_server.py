@@ -37,6 +37,8 @@ while running:
                 input.remove(s)
 
 
+'''
+# CURRENTLY UNUSED CODE
 
 # initialization total
 IT = ''
@@ -81,7 +83,7 @@ def shutdown(self):
         except IOError:
             pass
 
-
+'''
 '''def disconnect(clientList)
     for c in clientList
         if'''
