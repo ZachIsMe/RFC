@@ -20,6 +20,7 @@ csock = []
 # number of clients
 numc = 2
 
+reload(sys)
 
 # accept from client
 for i in range(numc):
@@ -54,6 +55,6 @@ def shutdown(self):
             pass
 
 
-def disconnect(clientList)
+'''def disconnect(clientList)
     for c in clientList
-        if
+        if'''
