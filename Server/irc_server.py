@@ -21,6 +21,7 @@ csock = []
 numc = 2
 
 reload(sys)
+sys.setdefaultencoding('UTF8')
 
 # accept from client
 for i in range(numc):
