@@ -35,7 +35,7 @@ while running:
             else:
                 s.close()
                 input.remove(s)
-
+server.close()
 
 '''
 # CURRENTLY UNUSED CODE
@@ -87,6 +87,3 @@ def shutdown(self):
 '''def disconnect(clientList)
     for c in clientList
         if'''
-
-
-server.close()
