@@ -1,7 +1,10 @@
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-import sys,socket,os,signal,shutil,select
-
-
+import sys
+import socket
+import os
+import signal
+import shutil
+import select
 
 host = ''  # could instead pass in '' in bind tuple
 port = 50000

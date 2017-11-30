@@ -6,6 +6,7 @@ import argparse
 import logging
 
 
+'''
 class IRCClient:
 
     irc = socket.socket()
@@ -57,5 +58,4 @@ class IRCClient:
 
     # Objective 16
 #    def Heartbeat(self):
-
-
+'''
