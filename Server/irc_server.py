@@ -6,7 +6,8 @@ import signal
 import shutil
 import select
 
-host = ''  # could instead pass in '' in bind tuple
+host = '127.0.0.1'
+# could instead pass in '' in bind tuple
 port = 50000
 backlog = 5
 size = 1024
