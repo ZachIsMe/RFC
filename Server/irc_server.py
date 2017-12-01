@@ -20,25 +20,24 @@ server.bind((host, port))  # passing tuple as single argument
 # accept call from client
 server.listen(5)  # max one queued connection. Min 0
 reload(sys)
-sys.setdefaultencoding('UTF8')
+# sys.setdefaultencoding("UTF8")  # unnecessary
+
+
 def connect(self):
     self.sockets = []
     input = [server, sys.stdin]
     running = 1
     while running:
         try:
-            inputready,outputready,exceptready = select.select(input,[],[])
+            inputready, outputready, exceptready = select.select(input, [], [])
         except select.error, e:
             print "select error\n"
             break
-
-
-
         for s in inputready:
             if s == server:
                 client, address = server.accept()
-                clientName = "PLACEHOLDER CLIENT NAME"
-                print "Hello " + clientName
+                client_name = "PLACEHOLDER CLIENT NAME"
+                print "Hello " + client_name
                 input.append(client)
             elif s == sys.stdin:
                 junk = sys.stdin.readline()
@@ -56,11 +55,10 @@ def connect(self):
                 else:
                     s.close()
                     input.remove(s)
-server.close()
-
-def create_room(cname, client):
+    server.close()
 
 
+#  def create_room(cname, client):
 
 
 class Room:
@@ -68,10 +66,8 @@ class Room:
         self.name = "General"  # Change later to pass in name from client in class declaration
         self.sockets = []
 
-
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
-
 
 
 '''
