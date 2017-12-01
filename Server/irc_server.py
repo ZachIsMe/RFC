@@ -24,10 +24,18 @@ sys.setdefaultencoding('UTF8')
 input = [server, sys.stdin]
 running = 1
 while running:
-    inputready,outputready,exceptready = select.select(input,[],[])
+    try:
+        inputready,outputready,exceptready = select.select(input,[],[])
+    except select.error, e:
+        print "select error\n"
+        break
+
+
+
     for s in inputready:
         if s == server:
             client, address = server.accept()
+            clientName = recieve(conn)
             input.appent(client)
         elif s == sys.stdin:
             junk = sys.stdin.readline()
@@ -40,6 +48,22 @@ while running:
                 s.close()
                 input.remove(s)
 server.close()
+
+def create_room(cname, client):
+
+
+
+
+class Room:
+    def __init__(self):  # Default constructor
+        self.name = "General"  # Change later to pass in name from client in class declaration
+        self.sockets = []
+
+
+    def client_joined(self, a_client):
+        welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
+
+
 
 '''
 # CURRENTLY UNUSED CODE
