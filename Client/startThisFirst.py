@@ -6,14 +6,15 @@ parser.add_argument('-host', '--HOST')
 args = parser.parse_args()
 
 host = args.HOST
-port=6667
-user=None
-channel=None
+port = 6667
+user = None
+channel = None
 
 
 #connect
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((host,port))
+print "Host " + host + "\n"
+s.connect((host, port))
 print "Connected to server\n"
 
 #socket_list = [ sys.stdin, s ]
