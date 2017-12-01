@@ -21,32 +21,41 @@ server.bind((host, port))  # passing tuple as single argument
 server.listen(5)  # max one queued connection. Min 0
 reload(sys)
 sys.setdefaultencoding('UTF8')
-input = [server, sys.stdin]
-running = 1
-while running:
-    try:
-        inputready,outputready,exceptready = select.select(input,[],[])
-    except select.error, e:
-        print "select error\n"
-        break
+def connect(self):
+    self.sockets = []
+    input = [server, sys.stdin]
+    running = 1
+    while running:
+        try:
+            inputready,outputready,exceptready = select.select(input,[],[])
+        except select.error, e:
+            print "select error\n"
+            break
 
 
 
-    for s in inputready:
-        if s == server:
-            client, address = server.accept()
-            clientName = recieve(conn)
-            input.appent(client)
-        elif s == sys.stdin:
-            junk = sys.stdin.readline()
-            running = 0
-        else:
-            data = s.recv(size)
-            if data:
-                s.send(data)
+        for s in inputready:
+            if s == server:
+                client, address = server.accept()
+                clientName = "PLACEHOLDER CLIENT NAME"
+                print "Hello " + clientName
+                input.append(client)
+            elif s == sys.stdin:
+                junk = sys.stdin.readline()
+                if junk == "DISCONNECT":
+                    print "Closing server"
+                    for ss in self.sockets:
+                        ss.close()
+                    self.server.close()
+                else:
+                    running = 0  # May need to place with if statement, OR sets all all times within elif
             else:
-                s.close()
-                input.remove(s)
+                data = s.recv(size)
+                if data:
+                    s.send(data)
+                else:
+                    s.close()
+                    input.remove(s)
 server.close()
 
 def create_room(cname, client):
