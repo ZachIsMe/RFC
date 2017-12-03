@@ -5,7 +5,11 @@ parser = argparse.ArgumentParser(description='Local Host Definition')
 parser.add_argument('-host', '--HOST')
 args = parser.parse_args()
 
-host = args.HOST
+if( args.HOST == None ):
+  host = ''
+else:
+  host = args.HOST
+
 port = 6667
 user = None
 channel = None
