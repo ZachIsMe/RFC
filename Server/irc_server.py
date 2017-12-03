@@ -60,11 +60,24 @@ def connect(self):
 
 #  def create_room(cname, client):
 
+class Chat:
+    def __init__(self):
+        self.rooms = {}
+
+    def list_rooms(self, client):
+        if len(self.rooms) == 0:
+            message = "There are no rooms available\n"
+            client.socket.sendall(message.encode())
+        else:
+            for r in self.rooms:
+                print(self.rooms[r].client)
+
 
 class Room:
-    def __init__(self):  # Default constructor
-        self.name = "General"  # Change later to pass in name from client in class declaration
+    def __init__(self, name):  # Default constructor
+        self.name = name  # Change later to pass in name from client in class declaration
         self.sockets = []
+        self.memebers = []  # Holds the names of users who are in the chat room
 
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
