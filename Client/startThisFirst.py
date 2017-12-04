@@ -43,6 +43,10 @@ while( cmd != '/quit'):
         #do stuff
 
        # target=s.conn.recv(512)))
+
+
+
+
 '''
     ircmsg = s.recv(1024)
 

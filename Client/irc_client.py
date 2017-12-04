@@ -4,6 +4,7 @@ import threading
 import string
 import argparse
 import logging
+import re
 
 
 
@@ -45,6 +46,38 @@ class IRCClient:
 
     def ping(self):
         self.irc.send(("PONG :pingis\n").encode("UTF-8"))
+
+    def choices(message, sclient, self):
+        command = message.split()[0]
+        count = len(re.findall(r'\w+',message))
+        if command == "CREATE":
+            if count !=2:
+                output = "Invalid: input CREATE roomname"
+                # send to client
+            else:
+                sender = "temp"
+                # create channel
+        elif command == "DISCONNECT":
+            if count!=2:
+                output = "Invalid: input DISCONNECT roomname"
+
+            else:
+                sender = "temp"
+
+        elif command == "JOIN":
+            if count == 2:
+                sender = "temp"
+                # join channel
+            else:
+                output = "Invalid: please input at least one room/channel to join"
+        elif command == "LIST":
+            if count > 1:
+                output = "Invalid: only input LIST"
+
+            elif count == 1:
+                room_list = []
+                # list rooms
+
 
 #    def createChannel(self, name, channel):
 #    def listRooms(self):
