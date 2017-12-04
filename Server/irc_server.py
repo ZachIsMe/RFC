@@ -81,7 +81,52 @@ class Room:
 
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
+    def choices(message, sclient, self):
+        command = message.split()[0]
+        count = len(re.findall(r'\w+',message))
+        if command == "CREATE":
+            if count !=2:
+                output = "Invalid: input CREATE roomname"
+                # send to client
+            else:
+                sender = "temp"
+                # create channel
+        elif command == "DISCONNECT":
+            if count!=2:
+                output = "Invalid: input DISCONNECT roomname"
 
+            else:
+                sender = "temp"
+
+        elif command == "JOIN":
+            if count == 2:
+                sender = "temp"
+                # join channel
+            else:
+                output = "Invalid: please input at least one room/channel to join"
+        elif command == "LIST":
+            if count > 1:
+                output = "Invalid: only input LIST"
+
+            elif count == 1:
+                room_list = []
+                # list rooms
+
+ # Helpful:
+'''
+def create_channel(channelname, client, socket, channelMap):
+    if check_channel_exist(channelname, channelMap) == False:
+        channelMap[channelname] = [[client,socket]]
+        msg = "Room %s Created" % (channelname)
+        new_message = '\n[' + 'SERVER@6510' + ']>> ' + msg
+        send(socket,new_message)
+        return channelMap
+    else:
+        msg = "Room is Existing....Joining Room"
+        new_message = '\n[' + 'SERVER@6510' + ']>> ' + msg
+        send(socket, new_message)
+        join_channel(channelname, client, socket, channelMap)
+'''
 
 '''
 # CURRENTLY UNUSED CODE
