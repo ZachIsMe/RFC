@@ -4,8 +4,6 @@
     <list default="true" id="71064bde-ea94-4eba-a027-9b66ae156e72" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/../Client/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Client/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/../Client/irc_client.py" afterPath="$PROJECT_DIR$/../Client/irc_client.py" />
-      <change beforePath="$PROJECT_DIR$/../Client/startThisFirst.py" afterPath="$PROJECT_DIR$/../Client/startThisFirst.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
