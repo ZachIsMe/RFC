@@ -39,8 +39,8 @@ def connect(self):
         for s in inputready:
             if s == server:
                 client, address = server.accept()
-                client_name = receive(client).split('NAME: ')[1]
-                cList['Global'].append([client_name, conn   ])
+                client_name = receive(client).split('NAME: ')[1]   # NOT DONE
+                cList['Global'].append([client_name, client])
                 print "Hello " + client_name
                 input.append(client)
 
@@ -223,7 +223,7 @@ def member_list(socket, cName,  cList):
 
     else:
         output = "Room to check members in does not exist"
-        socket.send(output) 
+        socket.send(output)
 
 
 
