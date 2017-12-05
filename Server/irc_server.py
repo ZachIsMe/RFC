@@ -37,10 +37,12 @@ class ServerMain:
         self.server.listen(5)  # Max backlog value
         signal.signal(signal.SIGINT, self.signal_handler)
 
-    def signal_handler(signal, frame):
-        print("Exiting")
-        sys.exit(0)
-
+    def signal_handler(self, signal, frame):
+        print "Exiting"
+        for s in socket:
+            s.close()
+            self.server.close()
+            sys.exit(0)
 
     def connect(self):
         self.sockets = []
