@@ -84,6 +84,8 @@ class Room:
         self.sockets = []
         self.memebers = []  # Holds the names of users who are in the chat room
 
+
+
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
 
