@@ -5,6 +5,8 @@ import os
 import signal
 import shutil
 import select
+import re
+
 
 host = '127.0.0.1'
 # could instead pass in '' in bind tuple
@@ -27,6 +29,7 @@ def connect(self):
     self.sockets = []
     input = [server, sys.stdin]
     running = 1
+    cList = {'Global':[]}  # Dictionary 
     while running:
         try:
             inputready, outputready, exceptready = select.select(input, [], [])
@@ -36,9 +39,11 @@ def connect(self):
         for s in inputready:
             if s == server:
                 client, address = server.accept()
-                client_name = "PLACEHOLDER CLIENT NAME"
+                client_name = receive(client).split('NAME: ')[1]
+                cList['Global'].append([client_name, conn   ])
                 print "Hello " + client_name
                 input.append(client)
+
             elif s == sys.stdin:
                 junk = sys.stdin.readline()
                 if junk == "DISCONNECT":
@@ -81,36 +86,91 @@ class Room:
 
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
-    def choices(message, sclient, self):
+    def choices(message, sclient, cList):
         command = message.split()[0]
         count = len(re.findall(r'\w+',message))
         if command == "CREATE":
             if count !=2:
                 output = "Invalid: input CREATE roomname"
                 # send to client
+                sclient.send(output)
             else:
                 sender = "temp"
                 # create channel
         elif command == "DISCONNECT":
-            if count!=2:
+            if count != 2:
                 output = "Invalid: input DISCONNECT roomname"
-
+                sclient.send(output)
             else:
                 sender = "temp"
 
         elif command == "JOIN":
             if count == 2:
                 sender = "temp"
+                join(message.split()[1], sender, sclient,cList)
                 # join channel
             else:
                 output = "Invalid: please input at least one room/channel to join"
-        elif command == "LIST":
-            if count > 1:
-                output = "Invalid: only input LIST"
-
-            elif count == 1:
+                sclient.send(output)
+        elif command == "LISTROOM":
+            if count != 1:
+                output = "Invalid: only input LISTROOM"
+                sclient.send(output)
+            else:
                 room_list = []
                 # list rooms
+                room_list(sclient,message.split()[1],cList)
+
+
+def create(name, client, socket, cList):
+    if c_exists(name, cList) == True:
+        output = "Room already exists. Joining channel %s..." % (name)
+        socket.send(output)
+        join(name,client,socket,cList)
+    else:
+        cList[name] = [[client, socket]]
+        output = "Created room name %s" % (name)
+        socket.send(output)
+        return cList
+
+def c_exists(name, cList):
+    if name in cList.keys():
+        return True
+    else:
+        return False
+
+
+def join(name,client,socket,cList):
+    if c_exists(name,cList) == True:
+        if inChannel(client, socket, name, cList) == True:
+            output = "Already in room"
+            socket.send(output)
+            return cList
+        else:
+            cList[name].append([client, socket])
+            output = "Successfully joined room/channel"
+            socket.send(output)
+            return cList
+
+    else:
+        output = "Room/channel does not exist"
+        socket.send(output)
+        return cList
+
+def inChannel(client, socket, name, cList):
+    if c_exists(name, cList) == True:
+        if [name, socket] in cList[name]:
+            return True
+        else:
+            return False
+
+    else:
+        output = "Checking for room that user is already in not found"
+        socket.send(output)
+
+def room_list(socket, cList):
+    print_list = []
+
 
  # Helpful:
 '''
