@@ -44,15 +44,20 @@ class ServerMain:
             self.server.close()
             sys.exit(0)
 
+    def remove_all(self, socket):
+
+
+
     def connect(self):
-        self.sockets = []
-        input = [self.server, sys.stdin]
+        self.sockets = {'SuperServer': [self.server]}
+        self.room_list = []
+        # input = [self.server, sys.stdin]
         running = 1
-        cList = {'Global': []}  # Dictionary
+        # cList = {'Global': []}  # Dictionary
         while running:
             print "Running"
             try:
-                inputready, outputready, exceptready = select.select(input, [], [])
+                inputready, temp1, temp2 = select.select(list(self.sockets.keys()), [], [])
             except select.error, e:
                 print "select error\n"
                 break
@@ -60,34 +65,136 @@ class ServerMain:
                 print "In for loop"
                 if s == self.server:
                     print "Waiting for client"
-                    client, address = server.accept()
+                    client, address = self.server.accept()
                     print "Accepted client"
-                    client_name = client.split('Name: ')[1]  # take name from client and set it as their name     #receive(client).split('NAME: ')[1]   # NOT DONE
-                    cList['Global'].append([client_name, client])
-                    print "Hello " + client_name
-                    input.append(client)
+                    self.sockets[client] = client  # automatically adds key
 
-                elif s == sys.stdin:
-                    junk = sys.stdin.readline()
-                    if junk == "DISCONNECT":
-                        print "Closing server"
-                        for ss in self.sockets:
-                            ss.close()
-                        self.server.close()
-                    else:
-                        running = 0  # May need to place with if statement, OR sets all all times within elif
                 else:
                     data = s.recv(size)
                     if data:
                         # s.send(data)
-                        Room.choices(data, s, cList)
+                        # Room.choices(data, s, cList)
+                        #parse here
+                        command = data.split()[0]
+                        count = len(re.findall(r'\w+', data))
+                        if command == "USERNAME":
+                            if count != 2:
+                                output = "Invalid: input USERNAME name"
+                                s.send(output)
+                            else:
+                                client_name = data.split()[1]
+                                self.sockets[s] = client_name
+                        elif command == "CREATE":
+                            if count != 2:
+                                output = "Invalid: input CREATE roomname"
+                                # send to client
+                                s.send(output)
+                            else:
+                                output = "Creating room..."
+                                new_room = Channel(data.split()[1])
+                                s.send(output)
+                                output = "Joining room..."
+                                new_room.add_client(self.sockets[s], self.sockets)
+                                self.room_list.append(new_room)
+                                s.send(output)
+                                # create channel
+                        elif command == "LEAVE":
+                            if count != 2:
+                                output = "Invalid: input LEAVE roomname"
+                                s.send(output)
+                            else:
+                                output = "Leaving"
+                                s.send(output)
+                                for c in room_list:
+                                    print c.name
+                                    if c.name == data.split()[1]:
+                                        c.remove_client(c.name)
+                                        break
+
+                        elif command == "DISCONNECT":
+                            if count != 1:
+                                output = "Invalid: input DISCONNECT"
+                                s.send(output)
+                            else:
+                                for c in room_list:
+                                    if c.check_client(s)
+
+                        elif command == "JOIN":
+                            if count == 2:
+                                sender = "temp"
+                                join(message.split()[1], sender, sclient, cList)
+                                # join channel
+                            else:
+                                output = "Invalid: please input at least one room/channel to join"
+                                s.send(output)
+                        elif command == "LISTROOM":
+                            if count != 1:
+                                output = "Invalid: only input LISTROOM"
+                                s.send(output)
+                            else:
+                                room_list = []
+                                # list rooms
+                                room_list(s, data.split()[1], cList)
+                        elif command == "LISTMEMBERS":
+                            if count != 1:
+                                output = "Invalid: input LISTMEMBERS roomname"
+                                s.send(output)
+                            else:
+                                for c in room_list:
+                                    if c.name == data.split()[1]:
+                                        mem_list = c.member_list()
+                                        for i in mem_list:
+                                            s.send(i)
+
                     else:
                         s.close()
-                        input.remove(s)
+                        del self.sockets[s]
+
         server.close()
 
+def create(name, client, socket, cList):
+    if c_exists(name, cList) == True:
+        output = "Room already exists. Joining channel %s..." % (name)
+        socket.send(output)
+        join(name,client,socket,cList)
+    else:
+        cList[name] = [[client, socket]]
+        output = "Created room name %s" % (name)
+        socket.send(output)
+        return cList
 
-#  def create_room(cname, client):
+
+class Channel:
+    def __init__(self, name):
+        self.name = name
+        self.clients = {}
+
+    def add_client(self, client_name, socket):
+        self.clients[socket] = client_name
+        # self.clients.append(client_name)
+
+    def check_client(self, client_name):
+        for key, value in self.clients.iteritems():
+            if value == client_name:
+                del self.clients[key]
+
+    def remove_client(self, client_name):
+        for key, value in self.clients.iteritems():
+            if value == client_name:
+                # self.clients.remove(client_name)
+                del self.clients[key]
+            else:
+                print "Client not in channel"
+    def remove_all(self):
+        self.clients.clear()
+    def memeber_list(self):
+        mList = []
+        for key, values in self.clients.iteritems():
+            mList.append((self.clients[socket]))
+        return mList
+
+
+
 
 class Chat:
     def __init__(self):
@@ -117,7 +224,7 @@ class Room:
         command = message.split()[0]
         count = len(re.findall(r'\w+',message))
         if command == "CREATE":
-            if count !=2:
+            if count != 2:
                 output = "Invalid: input CREATE roomname"
                 # send to client
                 sclient.send(output)
@@ -189,16 +296,6 @@ def leave(cName, client, socket, cList):
         return cList
 
 
-def create(name, client, socket, cList):
-    if c_exists(name, cList) == True:
-        output = "Room already exists. Joining channel %s..." % (name)
-        socket.send(output)
-        join(name,client,socket,cList)
-    else:
-        cList[name] = [[client, socket]]
-        output = "Created room name %s" % (name)
-        socket.send(output)
-        return cList
 
 
 def c_exists(name, cList):
