@@ -13,7 +13,7 @@ else:
 
 class IRCClient:
 
-    def __init__(self, server, username, port ):
+    def __init__(self, server, username, port):
         self.username = username
         self.server = server
         self.port = port
@@ -24,7 +24,7 @@ class IRCClient:
             self.connection.connect((self.server, self.port))
         except socket.error, msg:
             print "Error occurred during attempt to connect to:"
-            print "{} at port {}".format(server, port)
+            print "{} at port {}".format(self.server, self.port)
             print "Error Message: {}".format(msg)
             print "Please restart the program"
             sys.exit(0)

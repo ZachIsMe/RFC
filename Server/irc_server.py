@@ -24,43 +24,43 @@ server.listen(5)  # max one queued connection. Min 0
 reload(sys)
 # sys.setdefaultencoding("UTF8")  # unnecessary
 
+class ServerMain():
+    def connect(self):
+        self.sockets = []
+        input = [server, sys.stdin]
+        running = 1
+        cList = {'Global': []}  # Dictionary
+        while running:
+            try:
+                inputready, outputready, exceptready = select.select(input, [], [])
+            except select.error, e:
+                print "select error\n"
+                break
+            for s in inputready:
+                if s == server:
+                    client, address = server.accept()
+                    client_name = "temp"#receive(client).split('NAME: ')[1]   # NOT DONE
+                    cList['Global'].append([client_name, client])
+                    print "Hello " + client_name
+                    input.append(client)
 
-def connect(self):
-    self.sockets = []
-    input = [server, sys.stdin]
-    running = 1
-    cList = {'Global': []}  # Dictionary
-    while running:
-        try:
-            inputready, outputready, exceptready = select.select(input, [], [])
-        except select.error, e:
-            print "select error\n"
-            break
-        for s in inputready:
-            if s == server:
-                client, address = server.accept()
-                client_name = receive(client).split('NAME: ')[1]   # NOT DONE
-                cList['Global'].append([client_name, client])
-                print "Hello " + client_name
-                input.append(client)
-
-            elif s == sys.stdin:
-                junk = sys.stdin.readline()
-                if junk == "DISCONNECT":
-                    print "Closing server"
-                    for ss in self.sockets:
-                        ss.close()
-                    self.server.close()
+                elif s == sys.stdin:
+                    junk = sys.stdin.readline()
+                    if junk == "DISCONNECT":
+                        print "Closing server"
+                        for ss in self.sockets:
+                            ss.close()
+                        self.server.close()
+                    else:
+                        running = 0  # May need to place with if statement, OR sets all all times within elif
                 else:
-                    running = 0  # May need to place with if statement, OR sets all all times within elif
-            else:
-                data = s.recv(size)
-                if data:
-                    s.send(data)
-                else:
-                    s.close()
-                    input.remove(s)
-    server.close()
+                    data = s.recv(size)
+                    if data:
+                        s.send(data)
+                    else:
+                        s.close()
+                        input.remove(s)
+        server.close()
 
 
 #  def create_room(cname, client):
