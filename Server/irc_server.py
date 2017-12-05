@@ -130,6 +130,13 @@ class Room:
                 room_list = []
                 # list rooms
                 room_list(sclient,message.split()[1],cList)
+        elif command == "LISTMEMBERS":
+            if count != 1:
+                output = "Invalid: input LISTMEMBERS roomname"
+                sclient.send(output)
+            else:
+                mem_list = []
+                member_list(sclient, message.split()[1], cList)
 
 
 def get_user_name(client, cList):
