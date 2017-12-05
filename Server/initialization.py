@@ -11,4 +11,5 @@ class IRCServer:
 
 
 if __name__ == "__main__":
-    irc_server.ServerMain.connect()
+    run_server = irc_server.ServerMain(6667)
+    run_server.connect()

@@ -46,19 +46,22 @@ class ServerMain:
 
     def connect(self):
         self.sockets = []
-        input = [server, sys.stdin]
+        input = [self.server, sys.stdin]
         running = 1
         cList = {'Global': []}  # Dictionary
         while running:
+            print "Running"
             try:
                 inputready, outputready, exceptready = select.select(input, [], [])
             except select.error, e:
                 print "select error\n"
                 break
             for s in inputready:
-                if s == server:
+                print "In for loop"
+                if s == self.server:
+                    print "Waiting for client"
                     client, address = server.accept()
-
+                    print "Accepted client"
                     client_name = client.split('Name: ')[1]  # take name from client and set it as their name     #receive(client).split('NAME: ')[1]   # NOT DONE
                     cList['Global'].append([client_name, client])
                     print "Hello " + client_name
