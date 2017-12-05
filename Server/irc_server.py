@@ -5,6 +5,8 @@ import os
 import signal
 import shutil
 import select
+import re
+
 
 host = '127.0.0.1'
 # could instead pass in '' in bind tuple
@@ -27,6 +29,7 @@ def connect(self):
     self.sockets = []
     input = [server, sys.stdin]
     running = 1
+    cList = {'Global': []}  # Dictionary
     while running:
         try:
             inputready, outputready, exceptready = select.select(input, [], [])
@@ -36,9 +39,11 @@ def connect(self):
         for s in inputready:
             if s == server:
                 client, address = server.accept()
-                client_name = "PLACEHOLDER CLIENT NAME"
+                client_name = receive(client).split('NAME: ')[1]   # NOT DONE
+                cList['Global'].append([client_name, client])
                 print "Hello " + client_name
                 input.append(client)
+
             elif s == sys.stdin:
                 junk = sys.stdin.readline()
                 if junk == "DISCONNECT":
@@ -82,6 +87,161 @@ class Room:
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
 
+    def choices(message, sclient, cList):
+        command = message.split()[0]
+        count = len(re.findall(r'\w+',message))
+        if command == "CREATE":
+            if count !=2:
+                output = "Invalid: input CREATE roomname"
+                # send to client
+                sclient.send(output)
+            else:
+                sender = "temp"
+                # create channel
+        elif command == "LEAVE":
+            if count != 2:
+                output = "Invalid: input LEAVE roomname"
+                sclient.send(output)
+            else:
+                cLeave = get_user_name(socket, cList)
+                leave(message.split()[1], cLeave, sclient,cList)
+        elif command == "DISCONNECT":
+            if count != 2:
+                output = "Invalid: input DISCONNECT roomname"
+                sclient.send(output)
+            else:
+                sender = "temp"
+
+        elif command == "JOIN":
+            if count == 2:
+                sender = "temp"
+                join(message.split()[1], sender, sclient,cList)
+                # join channel
+            else:
+                output = "Invalid: please input at least one room/channel to join"
+                sclient.send(output)
+        elif command == "LISTROOM":
+            if count != 1:
+                output = "Invalid: only input LISTROOM"
+                sclient.send(output)
+            else:
+                room_list = []
+                # list rooms
+                room_list(sclient,message.split()[1],cList)
+
+
+def get_user_name(client, cList):
+    for [check1, check2] in cList['Global']:
+        if check2 == client:
+            return check1
+
+
+def leave(cName, client, socket, cList):
+    #  add in ability to remove channel once empty
+    if inChannel(client, socket, cName, cList) == True:
+        cList[cName].remove([client, socket])
+        output = "You left the room"
+        client.send(output)
+        return cList
+    else:
+        output = "You are not in the room, so you cannot leave"
+        client.send(output)
+        return cList
+
+
+def create(name, client, socket, cList):
+    if c_exists(name, cList) == True:
+        output = "Room already exists. Joining channel %s..." % (name)
+        socket.send(output)
+        join(name,client,socket,cList)
+    else:
+        cList[name] = [[client, socket]]
+        output = "Created room name %s" % (name)
+        socket.send(output)
+        return cList
+
+
+def c_exists(name, cList):
+    if name in cList.keys():
+        return True
+    else:
+        return False
+
+
+def join(name,client,socket,cList):
+    if c_exists(name,cList) == True:
+        if inChannel(client, socket, name, cList) == True:
+            output = "Already in room"
+            socket.send(output)
+            return cList
+        else:
+            cList[name].append([client, socket])
+            output = "Successfully joined room/channel"
+            socket.send(output)
+            return cList
+
+    else:
+        output = "Room/channel does not exist"
+        socket.send(output)
+        return cList
+
+
+def inChannel(client, socket, name, cList):
+    if c_exists(name, cList) == True:
+        if [name, socket] in cList[name]:
+            return True
+        else:
+            return False
+
+    else:
+        output = "Checking for room that user is already in not found"
+        socket.send(output)
+
+
+def room_list(socket, cList):
+    print_list = []
+    for key,value in cList.items():
+        if key != 'Global':
+            print_list.append(key)
+    if print_list:
+        socket.send(print_list)
+    elif not print_list:
+        output = "No rooms"
+        socket.send(output)
+
+
+def member_list(socket, cName,  cList):
+    print_list = []
+    if c_exists(cName, cList) == True:
+        for [check1, check2] in cList[cName]:
+            print_list.append(check1)
+        if print_list:
+            socket.send(print_list)
+        elif not print_list:
+            output = "No members in room"
+            socket.send(output)
+
+    else:
+        output = "Room to check members in does not exist"
+        socket.send(output)
+
+
+
+ # Helpful:
+'''
+def create_channel(channelname, client, socket, channelMap):
+    if check_channel_exist(channelname, channelMap) == False:
+        channelMap[channelname] = [[client,socket]]
+        msg = "Room %s Created" % (channelname)
+        new_message = '\n[' + 'SERVER@6510' + ']>> ' + msg
+        send(socket,new_message)
+        return channelMap
+    else:
+        msg = "Room is Existing....Joining Room"
+        new_message = '\n[' + 'SERVER@6510' + ']>> ' + msg
+        send(socket, new_message)
+        join_channel(channelname, client, socket, channelMap)
+'''
 
 '''
 # CURRENTLY UNUSED CODE

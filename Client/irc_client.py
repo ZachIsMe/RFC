@@ -4,6 +4,7 @@ import threading
 import string
 import argparse
 import logging
+import re
 
 
 
@@ -45,6 +46,9 @@ class IRCClient:
 
     def ping(self):
         self.irc.send(("PONG :pingis\n").encode("UTF-8"))
+
+
+
 
 #    def createChannel(self, name, channel):
 #    def listRooms(self):
