@@ -24,7 +24,24 @@ server.listen(5)  # max one queued connection. Min 0
 reload(sys)
 # sys.setdefaultencoding("UTF8")  # unnecessary
 
-class ServerMain():
+
+class ServerMain:
+    def __init__(self, port):
+        self.sockets = 0
+        self.cList = []
+        # Socket List
+        self.sockets = []
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server.bind(('', port))
+        self.server.listen(5)  # Max backlog value
+        signal.signal(signal.SIGINT, self.signal_handler)
+
+    def signal_handler(signal, frame):
+        print("Exiting")
+        sys.exit(0)
+
+
     def connect(self):
         self.sockets = []
         input = [server, sys.stdin]
@@ -39,7 +56,8 @@ class ServerMain():
             for s in inputready:
                 if s == server:
                     client, address = server.accept()
-                    client_name = "temp"#receive(client).split('NAME: ')[1]   # NOT DONE
+
+                    client_name = client.split('Name: ')[1]  # take name from client and set it as their name     #receive(client).split('NAME: ')[1]   # NOT DONE
                     cList['Global'].append([client_name, client])
                     print "Hello " + client_name
                     input.append(client)
@@ -56,7 +74,8 @@ class ServerMain():
                 else:
                     data = s.recv(size)
                     if data:
-                        s.send(data)
+                        # s.send(data)
+                        Room.choices(data, s, cList)
                     else:
                         s.close()
                         input.remove(s)
