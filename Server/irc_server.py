@@ -137,6 +137,13 @@ class Room:
             else:
                 mem_list = []
                 member_list(sclient, message.split()[1], cList)
+        elif command == "MESSAGE":
+            c_mess(input, cList, sclient)
+
+
+
+def c_mess(input, cList, sclient):
+    message = "temp"
 
 
 def get_user_name(client, cList):
