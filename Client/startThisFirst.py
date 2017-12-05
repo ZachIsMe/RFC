@@ -15,7 +15,7 @@ BUFFER = 1024
 
 class IRCClient:
 
-    def __init__(self, server, username, port ):
+    def __init__(self, server, username, port):
         self.username = username
         self.server = server
         self.port = port

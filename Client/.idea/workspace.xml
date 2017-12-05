@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="66d93107-77b0-4799-a450-dd9077357c67" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/../Server/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Server/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/../Server/irc_server.py" afterPath="$PROJECT_DIR$/../Server/irc_server.py" />
     </list>
@@ -29,8 +30,8 @@
       <file leaf-file-name="startThisFirst.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/startThisFirst.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="23" column="61" lean-forward="true" selection-start-line="23" selection-start-column="12" selection-end-line="23" selection-end-column="61" />
+            <state relative-caret-position="124">
+              <caret line="79" column="74" lean-forward="true" selection-start-line="79" selection-start-column="74" selection-end-line="79" selection-end-column="74" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -42,6 +43,7 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
+      <find>CONNEC</find>
       <find>print</find>
     </findStrings>
   </component>
@@ -51,12 +53,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/startThisFirst.py" />
         <option value="$PROJECT_DIR$/irc_client.py" />
+        <option value="$PROJECT_DIR$/startThisFirst.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
     <option name="y" value="22" />
     <option name="width" value="1280" />
     <option name="height" value="778" />
@@ -144,7 +146,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1280" height="778" extended-state="1" />
+    <frame x="0" y="22" width="1280" height="778" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2652899" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -257,8 +259,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/startThisFirst.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="23" column="61" lean-forward="true" selection-start-line="23" selection-start-column="12" selection-end-line="23" selection-end-column="61" />
+        <state relative-caret-position="124">
+          <caret line="79" column="74" lean-forward="true" selection-start-line="79" selection-start-column="74" selection-end-line="79" selection-end-column="74" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>
