@@ -165,10 +165,15 @@ class ServerMain:
                                 re_message = ''
                                 for i in range(2, num):
                                     re_message = re_message + data.split()[i]
-
+                                is_room = False
+                                print "Message to send: " + re_message
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         c.send_message(re_message)
+                                        is_room = True
+                                    if is_room == False:
+                                        output = "No matching room found"
+                                        s.send(output)
 
                     else:
                         s.close()
@@ -219,7 +224,7 @@ class Channel:
     def send_message(self, message):
         for key, value in self.clients.iteritems():
             msg = "Message from room " + self.name + ': ' + message
-            self.clients[key].send(message)
+            key.send(message)
 
 class Chat:
     def __init__(self):

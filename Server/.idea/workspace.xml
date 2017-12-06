@@ -17,8 +17,8 @@
       <file leaf-file-name="irc_server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/irc_server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="533">
-              <caret line="158" column="69" lean-forward="true" selection-start-line="158" selection-start-column="69" selection-end-line="158" selection-end-column="69" />
+            <state relative-caret-position="305">
+              <caret line="175" column="54" lean-forward="true" selection-start-line="175" selection-start-column="54" selection-end-line="175" selection-end-column="54" />
               <folding>
                 <element signature="e#0#53#0" expanded="true" />
               </folding>
@@ -327,8 +327,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/irc_server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="158" column="69" lean-forward="true" selection-start-line="158" selection-start-column="69" selection-end-line="158" selection-end-column="69" />
+        <state relative-caret-position="305">
+          <caret line="175" column="54" lean-forward="true" selection-start-line="175" selection-start-column="54" selection-end-line="175" selection-end-column="54" />
           <folding>
             <element signature="e#0#53#0" expanded="true" />
           </folding>
