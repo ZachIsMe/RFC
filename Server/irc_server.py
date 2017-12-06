@@ -91,14 +91,28 @@ class ServerMain:
                                 # send to client
                                 s.send(output)
                             else:
-                                output = "Creating room..."
-                                new_room = Channel(data.split()[1])
-                                s.send(output)
-                                output = "Joining room..."
-                                new_room.add_client(self.sockets[s], s)
-                                self.room_list.append(new_room)
-                                s.send(output)
-                                # create channel
+                                is_room = False
+                                for c in self.room_list:
+                                    if c.name == data.split()[1]:
+                                        is_room = True
+                                if is_room == False:
+                                    output = "Creating room..."
+                                    new_room = Channel(data.split()[1])
+                                    s.send(output)
+                                    output = "Joining room..."
+                                    new_room.add_client(self.sockets[s], s)
+                                    self.room_list.append(new_room)
+                                    s.send(output)
+                                    # create channel
+                                if is_room == True:
+                                    output = "Room already exists. Joining now..."
+                                    s.send(output)
+                                    for c in self.room_list:
+                                        if c.name == data.split()[1]:
+                                            output = "Joining room..."
+                                            s.send(output)
+                                            c.add_client(self.sockets[s], s)
+
                         elif command == "LEAVE":
                             if count != 2:
                                 output = "Invalid: input LEAVE roomname"
@@ -156,7 +170,7 @@ class ServerMain:
                                         mem_list = c.member_list()
                                         for i in mem_list:
                                             s.send(i)
-                        elif command == "MESSAGE":
+                        elif command == "MESSAGE" or command == "SENDMESSAGE":
                             if count < 2:
                                 output = "Invalid: input MESSAGE roomname yourmessage"
                                 s.send(output)
@@ -165,10 +179,15 @@ class ServerMain:
                                 re_message = ''
                                 for i in range(2, num):
                                     re_message = re_message + data.split()[i]
-
+                                is_room = False
+                                print "Message to send: " + re_message
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         c.send_message(re_message)
+                                        is_room = True
+                                    if is_room == False:
+                                        output = "No matching room found"
+                                        s.send(output)
 
                     else:
                         s.close()
@@ -218,6 +237,7 @@ class Channel:
         return mList
     def send_message(self, message):
         for key, value in self.clients.iteritems():
+            msg = "Message from room " + self.name + ': ' + message
             key.send(message)
 
 class Chat:
