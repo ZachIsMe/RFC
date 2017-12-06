@@ -218,6 +218,7 @@ class Channel:
         return mList
     def send_message(self, message):
         for key, value in self.clients.iteritems():
+            msg = "Message from room " + self.name + ': ' + message
             self.clients[key].send(message)
 
 class Chat:
