@@ -156,7 +156,7 @@ class ServerMain:
                                         mem_list = c.member_list()
                                         for i in mem_list:
                                             s.send(i)
-                        elif command == "MESSAGE":
+                        elif command == "MESSAGE" or command == "SENDMESSAGE":
                             if count < 2:
                                 output = "Invalid: input MESSAGE roomname yourmessage"
                                 s.send(output)
