@@ -44,7 +44,6 @@ class ServerMain:
             self.server.close()
             sys.exit(0)
 
-
     def connect(self):
         self.sockets = {}
         self.sockets[self.server] = "SuperServer"
@@ -195,6 +194,7 @@ class ServerMain:
 
         server.close()
 
+
 def create(name, client, socket, cList):
     if c_exists(name, cList) == True:
         output = "Room already exists. Joining channel %s..." % (name)
@@ -228,17 +228,21 @@ class Channel:
                 del self.clients[key]
             else:
                 print "Client not in channel"
+
     def remove_all(self):
         self.clients.clear()
-    def memeber_list(self):
+
+    def member_list(self):
         mList = []
         for key, values in self.clients.iteritems():
             mList.append((self.clients[socket]))
         return mList
+
     def send_message(self, message):
         for key, value in self.clients.iteritems():
             msg = "Message from room " + self.name + ': ' + message
             key.send(message)
+
 
 class Chat:
     def __init__(self):
@@ -251,6 +255,7 @@ class Chat:
         else:
             for r in self.rooms:
                 print(self.rooms[r].client)
+
 
 class Room:
     def __init__(self, name):  # Default constructor
@@ -302,7 +307,7 @@ class Room:
                 room_list = []
                 # list rooms
                 room_list(sclient,message.split()[1],cList)
-        elif command == "LISTMEMBERS":
+        elif command == "LISTMEM":
             if count != 1:
                 output = "Invalid: input LISTMEMBERS roomname"
                 sclient.send(output)
@@ -311,14 +316,19 @@ class Room:
                 member_list(sclient, message.split()[1], cList)
         elif command == "MESSAGE":
             c_mess(input, cList, sclient)
+        elif command == "SENDALL":
+            list
+
 
 def c_mess(input, cList, sclient):
     message = "temp"
+
 
 def get_user_name(client, cList):
     for [check1, check2] in cList['Global']:
         if check2 == client:
             return check1
+
 
 def leave(cName, client, socket, cList):
     #  add in ability to remove channel once empty
@@ -331,8 +341,6 @@ def leave(cName, client, socket, cList):
         output = "You are not in the room, so you cannot leave"
         client.send(output)
         return cList
-
-
 
 
 def c_exists(name, cList):

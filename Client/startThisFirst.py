@@ -63,9 +63,9 @@ class IRCClient:
         cmd="LISTROOM"
         self.send_comm(cmd, "")
 
-    def list_members(self):
+    def list_members(self, roomname):
         cmd="LISTMEM"
-        self.send_comm(cmd, "")
+        self.send_comm(cmd, roomname)
 
     def create_room(self, roomname):
         cmd="CREATE"
@@ -136,7 +136,6 @@ if __name__ == "__main__":
     time.sleep(1)
     client.create_room("general")
 
-
     stuff = [sys.stdin, client.connection]
 
     while 1:
@@ -160,16 +159,27 @@ if __name__ == "__main__":
                     client.list_rooms()
                 #LIST MEMBERS BELOW
                 elif input.startswith("lm()"):
-                    input = input.split("()")[1].strip().split()[0]
-                    client.list_members()
+                    try:
+                        input = input.split("()")[1].strip().split()[0]
+                        client.list_members(input)
+                    except ValueError:
+                        print "{} needs at least 1 arg".format("lm()")
                 #JOIN ROOM BELOW
                 elif input.startswith("join()"):
-                    chan = input.split("()")[1].strip().split()[0]
-                    client.join_room(chan)
+                    try:
+                        chan = input.split("()")[1].strip().split()[0]
+                        client.join_room(chan)
+                    except ValueError:
+                        print "{} needs at least 1 args".format("join()")
                 #CREATE ROOM BELOW
                 elif input.startswith("create()"):
-                    chan = input.split("()")[1].strip().split()[0]
-                    client.create_room(room)
+                    print len(input.split("()"))
+                    print input.split("()")
+                    if len(input.split("()")) >= 2:
+                        chan = input.split("()")[1].strip().split()[0]
+                        client.create_room(chan)
+                    else:
+                        print "{} needs at least 1 args".format("create()")
                 #SEND MESSAGE TO SPECIFIC ROOM BELOW
                 elif input.startswith("smr()"):
                     chan = input.split("()")[1].strip().split(" ", 1)[0]
