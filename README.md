@@ -13,7 +13,7 @@
 |-|---------------|-|
 |1|RFC Document|In Progress|
 |2|Server Process||
-|3|Client can connect to a server||
+|3|Client can connect_to_server to a server||
 |4|Client can create a room||
 |5|Client can list all rooms||
 |6|Client can join a room||
