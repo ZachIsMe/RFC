@@ -91,14 +91,28 @@ class ServerMain:
                                 # send to client
                                 s.send(output)
                             else:
-                                output = "Creating room..."
-                                new_room = Channel(data.split()[1])
-                                s.send(output)
-                                output = "Joining room..."
-                                new_room.add_client(self.sockets[s], s)
-                                self.room_list.append(new_room)
-                                s.send(output)
-                                # create channel
+                                is_room = False
+                                for c in self.room_list:
+                                    if c.name == data.split()[1]:
+                                        is_room = True
+                                if is_room == False:
+                                    output = "Creating room..."
+                                    new_room = Channel(data.split()[1])
+                                    s.send(output)
+                                    output = "Joining room..."
+                                    new_room.add_client(self.sockets[s], s)
+                                    self.room_list.append(new_room)
+                                    s.send(output)
+                                    # create channel
+                                if is_room == True:
+                                    output = "Room already exists. Joining now..."
+                                    s.send(output)
+                                    for c in self.room_list:
+                                        if c.name == data.split()[1]:
+                                            output = "Joining room..."
+                                            s.send(output)
+                                            c.add_client(self.sockets[s], s)
+
                         elif command == "LEAVE":
                             if count != 2:
                                 output = "Invalid: input LEAVE roomname"

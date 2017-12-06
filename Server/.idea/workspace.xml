@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71064bde-ea94-4eba-a027-9b66ae156e72" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../Client/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Client/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/irc_server.py" afterPath="$PROJECT_DIR$/irc_server.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="irc_server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/irc_server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="175" column="54" lean-forward="true" selection-start-line="175" selection-start-column="54" selection-end-line="175" selection-end-column="54" />
+            <state relative-caret-position="487">
+              <caret line="112" column="57" lean-forward="false" selection-start-line="112" selection-start-column="57" selection-end-line="112" selection-end-column="57" />
               <folding>
                 <element signature="e#0#53#0" expanded="true" />
               </folding>
@@ -327,8 +326,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/irc_server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="175" column="54" lean-forward="true" selection-start-line="175" selection-start-column="54" selection-end-line="175" selection-end-column="54" />
+        <state relative-caret-position="487">
+          <caret line="112" column="57" lean-forward="false" selection-start-line="112" selection-start-column="57" selection-end-line="112" selection-end-column="57" />
           <folding>
             <element signature="e#0#53#0" expanded="true" />
           </folding>
