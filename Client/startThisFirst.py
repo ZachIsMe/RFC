@@ -75,12 +75,8 @@ class IRCClient:
         cmd="SENDALL"
         self.send_comm(cmd, message)
 
-    def send_message_to_room(self, message, channel):
-        cmd="{} {}".format("SENDMSG", channel)
-        self.send_comm(cmd, message)
-
-    def send_message(self, message):
-        cmd="MESSAGE"
+    def send_message_to_room(self, channel, message):
+        cmd="{} {}".format("MESSAGE", channel)
         self.send_comm(cmd, message)
 
     def heartbeat(self, message):
@@ -108,7 +104,6 @@ class IRCClient:
             sys.exit()
 
     def usage(self):
-        print "USAGE"
         print "Command\t\tDescription"
         for key, value in options.iteritems():
             print "{}\t\t{}".format(key, value)
@@ -116,13 +111,14 @@ class IRCClient:
 
 #options dictionary
 options = {"quit()": "Exiting the program",
-           "join() <channel>": "Join <channel>",
+           "join() <Channel>": "Join <channel>",
            "create() <RoomName>": "Create a room",
            "lr()": "List all rooms",
-           "lm()": "List members in the current channel",
+           "lm() <RoomName>": "List members in the current channel",
            #"sm() <Room>":"Send general message to <Room>",
-           "le()": "Leave the current room. Fails if you're the lobby",
+           "le() <RoomName>": "Leave the current room. Fails if you're the lobby",
            "sma()": "Send message to all rooms",
+           "smr() <RoomName> MESSAGE": "Send message to a specific room",
            "usage()": "Print out the usage for the client",
            }
 
@@ -137,7 +133,7 @@ if __name__ == "__main__":
     client = IRCClient(host, user, port)
 
     client.connect_to_server()
-    time.sleep(5)
+    time.sleep(1)
     client.create_room("general")
 
 
@@ -156,30 +152,41 @@ if __name__ == "__main__":
                 sys.stdout.flush()
                 input = sys.stdin.readline()
                 if input.startswith("quit()"):
-                    client.send_comm("QUIT", "")
+                    client.send_comm("DISCONNECT", "")
                     client.disconnect()
                     sys.exit(0)
+                #LIST MEMBERS BELOW
                 elif input.startswith("lr()"):
                     client.list_rooms()
+                #LIST MEMBERS BELOW
                 elif input.startswith("lm()"):
+                    input = input.split("()")[1].strip().split()[0]
                     client.list_members()
+                #JOIN ROOM BELOW
                 elif input.startswith("join()"):
-                    chan = input.split("()")
-                    client.join_room(chan[1].strip())
+                    chan = input.split("()")[1].strip().split()[0]
+                    client.join_room(chan)
+                #CREATE ROOM BELOW
                 elif input.startswith("create()"):
-                    room = input.split("()")
-                    client.create_room(room[1].strip())
+                    chan = input.split("()")[1].strip().split()[0]
+                    client.create_room(room)
+                #SEND MESSAGE TO SPECIFIC ROOM BELOW
                 elif input.startswith("smr()"):
-                    room = input
-                    client.send_message_to_room(room, channel)
+                    chan = input.split("()")[1].strip().split(" ", 1)[0]
+                    msg = input.split("()")[1].strip().split(" ", 1)[1]
+                    client.send_message_to_room(chan, msg)
+                #SEND MESSAGE TO SERVER BELOW
                 elif input.startswith("sma()"):
-                    message = input
-                    client.send_message_to_room(message, "ALL")
+                    chan = "ALL"
+                    msg = input.split("()")[1].split(" ", 1)[1]
+                    client.send_message_to_room(chan, msg)
+                #LEAVE ROOM
                 elif input.startswith("le()"):
-                    room = input
+                    room = input.split("()")[1].strip().split()
                     client.leave_room(room)
+                #COMMAND USAGE INFORMATION
                 elif input.startswith("usage()"):
                     client.usage()
                 elif input and len(input) > 0:
-                    client.send_message(input)
+                    client.send_message_to_room(channel, input)
 

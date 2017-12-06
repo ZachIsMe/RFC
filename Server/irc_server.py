@@ -218,7 +218,7 @@ class Channel:
         return mList
     def send_message(self, message):
         for key, value in self.clients.iteritems():
-            self.clients[key].send(message)
+            key.send(message)
 
 class Chat:
     def __init__(self):
