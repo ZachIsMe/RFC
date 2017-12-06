@@ -7,8 +7,8 @@ import shutil
 import select
 import re
 
-
-host = '127.0.0.1'
+#'127.0.0.1'
+host = ''
 # could instead pass in '' in bind tuple
 port = 50000
 backlog = 5
@@ -26,14 +26,14 @@ reload(sys)
 
 
 class ServerMain:
-    def __init__(self, port):
+    def __init__(self, host, port):
         self.sockets = 0
         self.cList = []
         # Socket List
         self.sockets = []
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server.bind(('', port))
+        self.server.bind((host, port))
         self.server.listen(5)  # Max backlog value
         signal.signal(signal.SIGINT, self.signal_handler)
 
@@ -43,6 +43,7 @@ class ServerMain:
             s.close()
             self.server.close()
             sys.exit(0)
+
 
     def connect(self):
         self.sockets = {}
@@ -121,6 +122,7 @@ class ServerMain:
                                 del self.sockets[s]
                                 s.close()
 
+
                         elif command == "JOIN":
                             if count == 2:
                                 for c in self.room_list:
@@ -178,7 +180,7 @@ def create(name, client, socket, cList):
     if c_exists(name, cList) == True:
         output = "Room already exists. Joining channel %s..." % (name)
         socket.send(output)
-        join(name,client,socket,cList)
+        join(name, client, socket, cList)
     else:
         cList[name] = [[client, socket]]
         output = "Created room name %s" % (name)
@@ -218,9 +220,6 @@ class Channel:
         for key, value in self.clients.iteritems():
             self.clients[key].send(message)
 
-
-
-
 class Chat:
     def __init__(self):
         self.rooms = {}
@@ -233,14 +232,11 @@ class Chat:
             for r in self.rooms:
                 print(self.rooms[r].client)
 
-
 class Room:
     def __init__(self, name):  # Default constructor
         self.name = name  # Change later to pass in name from client in class declaration
         self.sockets = []
         self.memebers = []  # Holds the names of users who are in the chat room
-
-
 
     def client_joined(self, a_client):
         welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
@@ -296,17 +292,13 @@ class Room:
         elif command == "MESSAGE":
             c_mess(input, cList, sclient)
 
-
-
 def c_mess(input, cList, sclient):
     message = "temp"
-
 
 def get_user_name(client, cList):
     for [check1, check2] in cList['Global']:
         if check2 == client:
             return check1
-
 
 def leave(cName, client, socket, cList):
     #  add in ability to remove channel once empty

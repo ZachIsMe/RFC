@@ -14,6 +14,7 @@ else:
 
 BUFFER = 1024
 
+#Class IRCClient modifed from https://raw.githubusercontent.com/bl4de/irc-client/master/irc_client.py
 class IRCClient:
 
     def __init__(self, server, username, port):
@@ -22,12 +23,12 @@ class IRCClient:
         self.port = port
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def connect(self):
+    def connect_to_server(self):
         try:
             self.connection.connect((self.server, self.port))
             self.send_comm("USERNAME", self.username)
         except socket.error, msg:
-            print "Error occurred during attempt to connect to:"
+            print "Error occurred during attempt to connect_to_server to:"
             print "{} at port {}".format(self.server, self.port)
             print "Error Message: {}".format(msg)
             print "Please restart the program and the server"
@@ -93,7 +94,7 @@ class IRCClient:
     def response(self):
         return self.connection.recv(BUFFER)
 
-    def print_response(self):
+    def servermsg_display(self):
         resp = self.response()
         if resp:
             if resp == "PING":
@@ -102,6 +103,7 @@ class IRCClient:
             else:
                 print "From Server: {}".format(resp)
         elif not resp:
+            '''Manpreet suggested this to validate server instead of heartbeat'''
             print "Server is down"
             sys.exit()
 
@@ -112,19 +114,17 @@ class IRCClient:
             print "{}\t\t{}".format(key, value)
 
 
-#            msg = resp.strip().split(" ")
-#            print "\n {} {}".format(msg[1].split("!")[0], msg[2].strip())
-
 #options dictionary
-options={"quit()":"Exiting the program",
-         "join() <channel>":"Join <channel>",
-         "lr()":"List all rooms",
-         "lm()":"List members in the current channel",
-#         "sm() <Room>":"Send general message to <Room>",
-         "le()":"Leave the current room. Fails if you're the lobby",
-         "sma()":"Send message to all rooms",
-         "usage()":"Print out the usage for the client",
-         }
+options = {"quit()": "Exiting the program",
+           "join() <channel>": "Join <channel>",
+           "create() <RoomName>": "Create a room",
+           "lr()": "List all rooms",
+           "lm()": "List members in the current channel",
+           #"sm() <Room>":"Send general message to <Room>",
+           "le()": "Leave the current room. Fails if you're the lobby",
+           "sma()": "Send message to all rooms",
+           "usage()": "Print out the usage for the client",
+           }
 
 #Main
 if __name__ == "__main__":
@@ -132,11 +132,14 @@ if __name__ == "__main__":
     user = "csherpa"
     channel = "general"
 
+#ask for username
     cmd = ""
     client = IRCClient(host, user, port)
-    client.connect()
+
+    client.connect_to_server()
     time.sleep(5)
-    client.join_room(channel)
+    client.create_room("general")
+
 
     stuff = [sys.stdin, client.connection]
 
@@ -147,7 +150,7 @@ if __name__ == "__main__":
         for s in something:
             if s is client.connection:
                 #client.heartbeat(s)
-                client.print_response()
+                client.servermsg_display()
             elif s is sys.stdin:
                 #print "{}@{}: ".format(user, channel)
                 sys.stdout.flush()
@@ -162,9 +165,10 @@ if __name__ == "__main__":
                     client.list_members()
                 elif input.startswith("join()"):
                     chan = input.split("()")
-                    #if len(chan) > 1:
-                    #    print chan
                     client.join_room(chan[1].strip())
+                elif input.startswith("create()"):
+                    room = input.split("()")
+                    client.create_room(room[1].strip())
                 elif input.startswith("smr()"):
                     room = input
                     client.send_message_to_room(room, channel)
@@ -178,6 +182,4 @@ if __name__ == "__main__":
                     client.usage()
                 elif input and len(input) > 0:
                     client.send_message(input)
-
-#        client.print_response()
 
