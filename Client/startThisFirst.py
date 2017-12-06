@@ -1,6 +1,7 @@
 import argparse, sys
 import socket
 import select
+import time
 
 parser = argparse.ArgumentParser(description='Local Host Definition')
 parser.add_argument('-host', '--HOST')
@@ -127,13 +128,14 @@ options={"quit()":"Exiting the program",
 
 #Main
 if __name__ == "__main__":
-    port = 6668
+    port = 6667
     user = "csherpa"
     channel = "general"
 
     cmd = ""
     client = IRCClient(host, user, port)
     client.connect()
+    time.sleep(5)
     client.join_room(channel)
 
     stuff = [sys.stdin, client.connection]

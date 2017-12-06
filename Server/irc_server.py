@@ -44,20 +44,16 @@ class ServerMain:
             self.server.close()
             sys.exit(0)
 
-    def remove_all(self, socket):
-
-
-
     def connect(self):
-        self.sockets = {'SuperServer': [self.server]}
+        self.sockets = {}
+        self.sockets[self.server] = "SuperServer"
         self.room_list = []
         # input = [self.server, sys.stdin]
         running = 1
         # cList = {'Global': []}  # Dictionary
         while running:
-            print "Running"
             try:
-                inputready, temp1, temp2 = select.select(list(self.sockets.keys()), [], [])
+                inputready, temp1, temp2 = select.select(self.sockets.keys(), [], [])
             except select.error, e:
                 print "select error\n"
                 break
@@ -75,8 +71,12 @@ class ServerMain:
                         # s.send(data)
                         # Room.choices(data, s, cList)
                         #parse here
+                        print data
                         command = data.split()[0]
-                        count = len(re.findall(r'\w+', data))
+                        print "Command: " + command
+                        print data.split()
+                        count = len(data.split())
+                        print count
                         if command == "USERNAME":
                             if count != 2:
                                 output = "Invalid: input USERNAME name"
@@ -105,7 +105,7 @@ class ServerMain:
                             else:
                                 output = "Leaving"
                                 s.send(output)
-                                for c in room_list:
+                                for c in self.room_list:
                                     print c.name
                                     if c.name == data.split()[1]:
                                         c.remove_client(c.name)
@@ -116,13 +116,21 @@ class ServerMain:
                                 output = "Invalid: input DISCONNECT"
                                 s.send(output)
                             else:
-                                for c in room_list:
-                                    if c.check_client(s)
+                                for c in self.room_list:
+                                    c.check_client(self.sockets[s])
+                                del self.sockets[s]
+                                s.close()
 
                         elif command == "JOIN":
                             if count == 2:
-                                sender = "temp"
-                                join(message.split()[1], sender, sclient, cList)
+                                for c in self.room_list:
+                                    if c.name == data.split()[1]:
+                                        output = "Joining channel..."
+                                        s.send(output)
+                                        c.add_client(self.sockets[s], self.sockets)
+                                    else:
+                                        output = "No channel to join matching that name"
+                                        s.send(output)
                                 # join channel
                             else:
                                 output = "Invalid: please input at least one room/channel to join"
@@ -132,19 +140,33 @@ class ServerMain:
                                 output = "Invalid: only input LISTROOM"
                                 s.send(output)
                             else:
-                                room_list = []
-                                # list rooms
-                                room_list(s, data.split()[1], cList)
+                                for c in self.room_list:
+                                    output = c.name
+                                    s.send(output)
+
                         elif command == "LISTMEMBERS":
                             if count != 1:
                                 output = "Invalid: input LISTMEMBERS roomname"
                                 s.send(output)
                             else:
-                                for c in room_list:
+                                for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         mem_list = c.member_list()
                                         for i in mem_list:
                                             s.send(i)
+                        elif command == "MESSAGE":
+                            if count < 2:
+                                output = "Invalid: input MESSAGE roomname yourmessage"
+                                s.send(output)
+                            else:
+                                num = len(data.split())
+                                re_message = ''
+                                for i in range(2, num):
+                                    re_message = re_message + data.split()[i]
+
+                                for c in self.room_list:
+                                    if c.name == data.split()[1]:
+                                        c.send_message(re_message)
 
                     else:
                         s.close()
@@ -192,6 +214,9 @@ class Channel:
         for key, values in self.clients.iteritems():
             mList.append((self.clients[socket]))
         return mList
+    def send_message(self, message):
+        for key, value in self.clients.iteritems():
+            self.clients[key].send(message)
 
 
 
