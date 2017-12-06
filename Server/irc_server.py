@@ -26,7 +26,7 @@ reload(sys)
 
 
 class ServerMain:
-    def __init__(self, host, port):
+    def __init__(self, port):
         self.sockets = 0
         self.cList = []
         # Socket List
@@ -95,7 +95,7 @@ class ServerMain:
                                 new_room = Channel(data.split()[1])
                                 s.send(output)
                                 output = "Joining room..."
-                                new_room.add_client(self.sockets[s], self.sockets)
+                                new_room.add_client(self.sockets[s], s)
                                 self.room_list.append(new_room)
                                 s.send(output)
                                 # create channel
@@ -129,7 +129,7 @@ class ServerMain:
                                     if c.name == data.split()[1]:
                                         output = "Joining channel..."
                                         s.send(output)
-                                        c.add_client(self.sockets[s], self.sockets)
+                                        c.add_client(self.sockets[s], s)
                                     else:
                                         output = "No channel to join matching that name"
                                         s.send(output)
