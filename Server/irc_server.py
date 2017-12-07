@@ -189,7 +189,7 @@ class ServerMain:
                                 print "Message to send: " + re_message
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
-                                        c.send_message(re_message)
+                                        c.send_message(self.sockets[s], re_message)
                                         is_room = True
                                     if is_room == False:
                                         output = "No matching room found"
@@ -249,10 +249,10 @@ class Channel:
             mList.append((msg))
         return mList
 
-    def send_message(self, message):
+    def send_message(self, member, message):
         for key, value in self.clients.iteritems():
-            msg = "Message from room " + self.name + ': ' + message
-            key.send(message)
+            msg = "Message from room " + self.name + ' member ' + member + ": " + message
+            key.send(msg)
 
 
 class Chat:
