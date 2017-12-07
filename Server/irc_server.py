@@ -241,8 +241,12 @@ class Channel:
 
     def member_list(self):
         mList = []
+        num = 1
         for key, values in self.clients.iteritems():
-            mList.append((self.clients[key]))
+            num_str = str(num)
+            msg = "Member #"+ num_str + ": " + self.clients[key] + "\n"
+            num = num + 1
+            mList.append((msg))
         return mList
 
     def send_message(self, message):
