@@ -39,7 +39,7 @@ class ServerMain:
 
     def signal_handler(self, signal, frame):
         print "Exiting"
-        for s in socket:
+        for s in self.sockets:
             s.close()
             self.server.close()
             sys.exit(0)
@@ -58,7 +58,6 @@ class ServerMain:
                 print "select error\n"
                 break
             for s in inputready:
-                print "In for loop"
                 if s == self.server:
                     print "Waiting for client"
                     client, address = self.server.accept()
@@ -71,12 +70,12 @@ class ServerMain:
                         # s.send(data)
                         # Room.choices(data, s, cList)
                         #parse here
-                        print data
+                        # print data
                         command = data.split()[0]
                         print "Command: " + command
-                        print data.split()
+                        # print data.split()
                         count = len(data.split())
-                        print count
+                        # print count
                         if command == "USERNAME":
                             if count != 2:
                                 output = "Invalid: input USERNAME name"
@@ -132,9 +131,13 @@ class ServerMain:
                             else:
                                 for c in self.room_list:
                                     c.check_client(self.sockets[s])
-                                del self.sockets[s]
+                                # del self.sockets[s]
+                                for key, value in self.sockets.items():
+                                        if key == s:
+                                            del self.sockets[s]
+                                            print "Removed " + value + " from server."
+                                # self.sockets.pop(s)
                                 s.close()
-
 
                         elif command == "JOIN":
                             if count == 2:
@@ -157,10 +160,12 @@ class ServerMain:
                             else:
                                 for c in self.room_list:
                                     output = c.name
-                                    s.send(output)
+                                    msg = "Room: " + output + "\n"
+                                    print msg
+                                    s.send(msg)
 
-                        elif command == "LISTMEMBERS":
-                            if count != 1:
+                        elif command == "LISTMEMBERS" or command == "LISTMEM":
+                            if count != 2:
                                 output = "Invalid: input LISTMEMBERS roomname"
                                 s.send(output)
                             else:
@@ -217,7 +222,7 @@ class Channel:
         # self.clients.append(client_name)
 
     def check_client(self, client_name):
-        for key, value in self.clients.iteritems():
+        for key, value in self.clients.items():
             if value == client_name:
                 del self.clients[key]
 
@@ -235,7 +240,7 @@ class Channel:
     def member_list(self):
         mList = []
         for key, values in self.clients.iteritems():
-            mList.append((self.clients[socket]))
+            mList.append((self.clients[key]))
         return mList
 
     def send_message(self, message):
@@ -409,21 +414,6 @@ def member_list(socket, cName,  cList):
 
 
 
- # Helpful:
-'''
-def create_channel(channelname, client, socket, channelMap):
-    if check_channel_exist(channelname, channelMap) == False:
-        channelMap[channelname] = [[client,socket]]
-        msg = "Room %s Created" % (channelname)
-        new_message = '\n[' + 'SERVER@6510' + ']>> ' + msg
-        send(socket,new_message)
-        return channelMap
-    else:
-        msg = "Room is Existing....Joining Room"
-        new_message = '\n[' + 'SERVER@6510' + ']>> ' + msg
-        send(socket, new_message)
-        join_channel(channelname, client, socket, channelMap)
-'''
 
 '''
 # CURRENTLY UNUSED CODE
