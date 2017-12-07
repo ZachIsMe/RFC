@@ -26,6 +26,7 @@ else: user = args.USER
 
 if args.debug: DEBUG = True
 
+
 #Class IRCClient modifed from https://raw.githubusercontent.com/bl4de/irc-client/master/irc_client.py
 class IRCClient:
 
@@ -177,15 +178,6 @@ def multiroommsg(input, key):
         return "Invalid Input:", "NoGoPie"
 
 
-def iterlist(list, msg):
-    if 'NoGoPie' in msg:
-        if DEBUG: print "Invalid Message"
-        return
-    else:
-        for idx, val in enumerate(list):
-            print "MESSAGE {} {}".format(val, msg)
-
-
 #Main
 if __name__ == "__main__":
     channel = "general"
@@ -237,7 +229,6 @@ if __name__ == "__main__":
                         for idx, val in enumerate(rooms):
                             time.sleep(1)
                             client.join_room(val)
-
                 #CREATE ROOM BELOW
                 elif input.startswith("create()"):
                     arg = onearg(input, "create()")
