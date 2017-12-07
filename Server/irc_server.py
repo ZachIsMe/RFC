@@ -39,7 +39,7 @@ class ServerMain:
 
     def signal_handler(self, signal, frame):
         print "Exiting"
-        for s in socket:
+        for s in self.sockets:
             s.close()
             self.server.close()
             sys.exit(0)
