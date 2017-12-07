@@ -162,7 +162,6 @@ class ServerMain:
                                 for c in self.room_list:
                                     output = c.name
                                     msg = "Room: " + output + "\n"
-                                    print msg
                                     s.send(msg)
 
                         elif command == "LISTMEMBERS" or command == "LISTMEM":
@@ -185,8 +184,7 @@ class ServerMain:
                                 for i in range(2, num):
                                     re_message = re_message + " " + data.split()[i]
                                 is_room = False
-                                print "Message to send: " + re_message
-                                print data.split()[1]
+                                # print "Message to send: " + re_message
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         c.send_message(self.sockets[s], re_message)
@@ -232,14 +230,12 @@ class Channel:
         for key, value in self.clients.items():
             if value == client_name:
                 # self.clients.remove(client_name)
-                print client_name
                 del self.clients[key]
 
             else:
                 print "Client not in channel"
 
-
-    def remove_all(self):
+    def remove_all(self):  # Unneeded. Used for testing
         self.clients.clear()
 
     def member_list(self):
@@ -269,91 +265,4 @@ class Chat:
         else:
             for r in self.rooms:
                 print(self.rooms[r].client)
-
-def c_mess(input, cList, sclient):
-    message = "temp"
-
-
-def get_user_name(client, cList):
-    for [check1, check2] in cList['Global']:
-        if check2 == client:
-            return check1
-
-
-def leave(cName, client, socket, cList):
-    #  add in ability to remove channel once empty
-    if inChannel(client, socket, cName, cList) == True:
-        cList[cName].remove([client, socket])
-        output = "You left the room"
-        client.send(output)
-        return cList
-    else:
-        output = "You are not in the room, so you cannot leave"
-        client.send(output)
-        return cList
-
-
-def c_exists(name, cList):
-    if name in cList.keys():
-        return True
-    else:
-        return False
-
-
-def join(name,client,socket,cList):
-    if c_exists(name,cList) == True:
-        if inChannel(client, socket, name, cList) == True:
-            output = "Already in room"
-            socket.send(output)
-            return cList
-        else:
-            cList[name].append([client, socket])
-            output = "Successfully joined room/channel"
-            socket.send(output)
-            return cList
-
-    else:
-        output = "Room/channel does not exist"
-        socket.send(output)
-        return cList
-
-
-def inChannel(client, socket, name, cList):
-    if c_exists(name, cList) == True:
-        if [name, socket] in cList[name]:
-            return True
-        else:
-            return False
-
-    else:
-        output = "Checking for room that user is already in not found"
-        socket.send(output)
-
-
-def room_list(socket, cList):
-    print_list = []
-    for key,value in cList.items():
-        if key != 'Global':
-            print_list.append(key)
-    if print_list:
-        socket.send(print_list)
-    elif not print_list:
-        output = "No rooms"
-        socket.send(output)
-
-
-def member_list(socket, cName,  cList):
-    print_list = []
-    if c_exists(cName, cList) == True:
-        for [check1, check2] in cList[cName]:
-            print_list.append(check1)
-        if print_list:
-            socket.send(print_list)
-        elif not print_list:
-            output = "No members in room"
-            socket.send(output)
-
-    else:
-        output = "Room to check members in does not exist"
-        socket.send(output)
 
