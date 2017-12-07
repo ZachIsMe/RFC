@@ -192,17 +192,15 @@ if __name__ == "__main__":
 
     stuff = [sys.stdin, client.connection]
 
-    sys.stdout.write("\n{}@{}: ".format(user, channel))
+    sys.stdout.write("\n{}@: ".format(user))
     while 1:
         something, y, z = select.select(stuff, [], [])
         for s in something:
             if s is client.connection:
                 sys.stdout.write("\n")
                 client.servermsg_display()
-                #sys.stdout.write("\n")
-                sys.stdout.write("\n{}@{}: ".format(user, channel))
+                sys.stdout.write("\n{}@: ".format(user))
             elif s is sys.stdin:
-                #print "\n{}@{}: ".format(user, channel)
                 sys.stdout.flush()
                 input = sys.stdin.readline()
                 if input.startswith("quit()"):
