@@ -141,12 +141,14 @@ class ServerMain:
 
                         elif command == "JOIN":
                             if count == 2:
+                                found_room = False
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         output = "Joining channel..."
                                         s.send(output)
                                         c.add_client(self.sockets[s], s)
-                                    else:
+                                        found_room = True
+                                    elif found_room == False:
                                         output = "No channel to join matching that name"
                                         s.send(output)
                                 # join channel
@@ -187,7 +189,7 @@ class ServerMain:
                                 print "Message to send: " + re_message
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
-                                        c.send_message(re_message)
+                                        c.send_message(self.sockets[s], re_message)
                                         is_room = True
                                     if is_room == False:
                                         output = "No matching room found"
@@ -239,14 +241,18 @@ class Channel:
 
     def member_list(self):
         mList = []
+        num = 1
         for key, values in self.clients.iteritems():
-            mList.append((self.clients[key]))
+            num_str = str(num)
+            msg = "Member #"+ num_str + ": " + self.clients[key] + "\n"
+            num = num + 1
+            mList.append((msg))
         return mList
 
-    def send_message(self, message):
+    def send_message(self, member, message):
         for key, value in self.clients.iteritems():
-            msg = "Message from room " + self.name + ': ' + message
-            key.send(message)
+            msg = "Message from room " + self.name + ' member ' + member + ": " + message
+            key.send(msg)
 
 
 class Chat:
