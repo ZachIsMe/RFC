@@ -1,18 +1,31 @@
-import argparse, sys
+import argparse
+import sys
 import socket
 import select
 import time
 
+BUFFER = 1024
+DEBUG = False
+
+##ArgsParse from the command line for different setting
 parser = argparse.ArgumentParser(description='Local Host Definition')
-parser.add_argument('-host', '--HOST')
+parser.add_argument('-ip', '-host', '--HOST', help="Host")
+parser.add_argument('-p', '-port', '--PORT', help="Port Number")
+parser.add_argument('-u', '-user', '--USER', help="Username")
+parser.add_argument('--debug', action='store_true', help="Debug")
 args = parser.parse_args()
 
-if args.HOST is None:
-    host = ''
-else:
-    host = args.HOST
+if args.HOST is None: host = ''
+else: host = args.HOST
 
-BUFFER = 1024
+if args.PORT is None: port = 6667
+else: port = args.PORT
+
+if args.USER is None: user = "Default"
+else: user = args.USER
+
+if args.debug: DEBUG = True
+
 
 #Class IRCClient modifed from https://raw.githubusercontent.com/bl4de/irc-client/master/irc_client.py
 class IRCClient:
@@ -36,7 +49,8 @@ class IRCClient:
 
     def send_comm(self, cmd, message):
         command = "{} {}\n".format(cmd, message)
-        print "To Server: {}".format(command)
+        if DEBUG:
+            sys.stdout.write("To Server: {}".format(command))
         self.connection.send(command)
 
     def join_room(self, channel):
@@ -93,39 +107,79 @@ class IRCClient:
     def servermsg_display(self):
         resp = self.response()
         if resp:
+            #HEARTBEAT TRUNCATED
             if resp == "PING":
                 cmd="PONG"
                 self.send_comm(cmd, "")
             else:
-                print "From Server: {}".format(resp)
+                sys.stdout.write("From Server: {}".format(resp))
         elif not resp:
             '''Manpreet suggested this to validate server instead of heartbeat'''
             print "Server is down"
             sys.exit()
 
     def usage(self):
-        print "Command\t\tDescription"
+        print "\nCommand Syntax\n\tDescription"
+        print "------------------------"
         for key, value in options.iteritems():
-            print "{}\t\t{}".format(key, value)
+            print "{}\n\t{}".format(key, value)
 
 
 #options dictionary
 options = {"quit()": "Exiting the program",
-           "join() <Channel>": "Join <channel>",
+           "join() <Room>": "Join <channel>",
+           "join() <Room1> <Room2> <Room3>": "Join multiple <rooms>. Space delimited",
            "create() <RoomName>": "Create a room",
            "lr()": "List all rooms",
-           "lm() <RoomName>": "List members in the current channel",
+           "lm() <Room>": "List members in the current channel",
            #"sm() <Room>":"Send general message to <Room>",
-           "le() <RoomName>": "Leave the current room. Fails if you're the lobby",
-           "sma()": "Send message to all rooms",
-           "smr() <RoomName> MESSAGE": "Send message to a specific room",
+           "le() <Room>": "Leave current <RoomName>",
+           "smr() <Room1> <Room2> <Room3>: MESSAGE": "Send message to targeted rooms. Colon delimited for Message; "
+                                                     "Space delimited for Rooms",
+           "smr() <Room> : MESSAGE": "Send message to a specific room",
            "usage()": "Print out the usage for the client",
            }
 
+
+def onearg(input, cmd):
+    arr = input.rstrip('\n').strip().split("()")
+    if len(arr) >= 2:
+        if len(arr[1]) > 1:
+            arg = arr[1].strip().split()[0]
+        else:
+            arg = arr
+        return arg
+    else:
+        print "{} needs at least 1 arg".format(cmd)
+        return ""
+
+
+def multijoin(input, key):
+    if input is None:
+        return
+    elif input.startswith(key):
+        a = input.strip().split("()")
+        b = a[1].split()
+        for idx, val in enumerate(b):
+            print "JOIN {}".format(val)
+
+
+def multiroommsg(input, key):
+    if input is None:
+        return "Invalid Input:", "NoGoPie"
+    elif input.startswith(key):
+        if key.strip() == "smr()":
+            a = input.split(key)[1].strip()
+            b = a.split(":")[1].strip()
+            c = a.split(":")[0].strip()
+            d = c.split()
+        return d, b
+    else:
+        return "Invalid Input:", "NoGoPie"
+
+
 #Main
 if __name__ == "__main__":
-    port = 6667
-    user = "csherpa"
     channel = "general"
 
 #ask for username
@@ -139,15 +193,16 @@ if __name__ == "__main__":
     stuff = [sys.stdin, client.connection]
 
     while 1:
-        print "{}@{}: ".format(user, channel)
-#        sys.stdout.flush()
+        sys.stdout.write("\n{}@{}: ".format(user, channel))
         something, y, z = select.select(stuff, [], [])
         for s in something:
             if s is client.connection:
-                #client.heartbeat(s)
+                sys.stdout.write("\n")
                 client.servermsg_display()
+                #sys.stdout.write("\n")
+                sys.stdout.write("\n{}@{}: ".format(user, channel))
             elif s is sys.stdin:
-                #print "{}@{}: ".format(user, channel)
+                #print "\n{}@{}: ".format(user, channel)
                 sys.stdout.flush()
                 input = sys.stdin.readline()
                 if input.startswith("quit()"):
@@ -159,44 +214,56 @@ if __name__ == "__main__":
                     client.list_rooms()
                 #LIST MEMBERS BELOW
                 elif input.startswith("lm()"):
-                    try:
-                        input = input.split("()")[1].strip().split()[0]
-                        client.list_members(input)
-                    except ValueError:
-                        print "{} needs at least 1 arg".format("lm()")
+                    arg = onearg(input, "lm()")
+                    if DEBUG: print arg
+                    client.list_members(arg)
                 #JOIN ROOM BELOW
                 elif input.startswith("join()"):
-                    try:
-                        chan = input.split("()")[1].strip().split()[0]
-                        client.join_room(chan)
-                    except ValueError:
-                        print "{} needs at least 1 args".format("join()")
+                    key = "join()"
+                    if input is None:
+                        continue
+                    elif input.startswith(key):
+                        cmd = input.strip().split("()")
+                        rooms = cmd[1].split()
+                        if DEBUG: print cmd,rooms
+                        for idx, val in enumerate(rooms):
+                            time.sleep(1)
+                            client.join_room(val)
                 #CREATE ROOM BELOW
                 elif input.startswith("create()"):
-                    print len(input.split("()"))
-                    print input.split("()")
-                    if len(input.split("()")) >= 2:
-                        chan = input.split("()")[1].strip().split()[0]
-                        client.create_room(chan)
-                    else:
-                        print "{} needs at least 1 args".format("create()")
+                    arg = onearg(input, "create()")
+                    if DEBUG: print arg
+                    client.create_room(arg)
                 #SEND MESSAGE TO SPECIFIC ROOM BELOW
                 elif input.startswith("smr()"):
-                    chan = input.split("()")[1].strip().split(" ", 1)[0]
-                    msg = input.split("()")[1].strip().split(" ", 1)[1]
-                    client.send_message_to_room(chan, msg)
-                #SEND MESSAGE TO SERVER BELOW
-                elif input.startswith("sma()"):
-                    chan = "ALL"
-                    msg = input.split("()")[1].split(" ", 1)[1]
-                    client.send_message_to_room(chan, msg)
+                    ### MESSAGE TO ONE ROOM
+                    key = "smr()"
+                    chan, msg = multiroommsg(input, key)
+                    if 'NoGoPie' in msg:
+                        if DEBUG: print "Invalid Message"
+                        continue
+                    else:
+                        for idx, val in enumerate(chan):
+                            time.sleep(1)
+                            client.send_message_to_room(val, msg)
                 #LEAVE ROOM
                 elif input.startswith("le()"):
-                    room = input.split("()")[1].strip().split()
-                    client.leave_room(room)
+                    arr = input.rstrip('\n').strip().split("()")
+                    if len(arr) >= 2:
+                        try:
+                            arg = None
+                            if len(arr[1]) > 1:
+                                arg = arr[1].strip().split()[0]
+                            else:
+                                arg = arr
+                            client.leave_room(arg)
+                        except ValueError:
+                            client.usage()
+                    else:
+                        print "{} needs at least 1 args".format("le()")
                 #COMMAND USAGE INFORMATION
                 elif input.startswith("usage()"):
                     client.usage()
                 elif input and len(input) > 0:
-                    client.send_message_to_room(channel, input)
+                    client.usage()
 
