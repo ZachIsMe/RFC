@@ -147,8 +147,10 @@ class ServerMain:
                                         s.send(output)
                                         c.add_client(self.sockets[s], s)
                                         found_room = True
+                                        output = "Joined channel " + data.split()[1] + "\n"
+                                        s.send(output)
                                 if found_room == False:
-                                    output = "No channel to join matching that name"
+                                    output = "No channel to join matching " + data.split()[1] + "\n"
                                     s.send(output)
                                 # join channel
                             else:
