@@ -119,9 +119,8 @@ class ServerMain:
                                 output = "Leaving"
                                 s.send(output)
                                 for c in self.room_list:
-                                    print c.name
                                     if c.name == data.split()[1]:
-                                        c.remove_client(c.name)
+                                        c.remove_client(self.sockets[s])
                                         break
 
                         elif command == "DISCONNECT":
@@ -148,9 +147,9 @@ class ServerMain:
                                         s.send(output)
                                         c.add_client(self.sockets[s], s)
                                         found_room = True
-                                    elif found_room == False:
-                                        output = "No channel to join matching that name"
-                                        s.send(output)
+                                if found_room == False:
+                                    output = "No channel to join matching that name"
+                                    s.send(output)
                                 # join channel
                             else:
                                 output = "Invalid: please input at least one room/channel to join"
@@ -184,16 +183,17 @@ class ServerMain:
                                 num = len(data.split())
                                 re_message = ''
                                 for i in range(2, num):
-                                    re_message = re_message + data.split()[i]
+                                    re_message = re_message + " " + data.split()[i]
                                 is_room = False
                                 print "Message to send: " + re_message
+                                print data.split()[1]
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         c.send_message(self.sockets[s], re_message)
                                         is_room = True
-                                    if is_room == False:
-                                        output = "No matching room found"
-                                        s.send(output)
+                                if is_room == False: # place outside for?
+                                    output = "Room name " + data.split()[1] + " not found\n"
+                                    s.send(output)
 
                     else:
                         s.close()
@@ -229,12 +229,15 @@ class Channel:
                 del self.clients[key]
 
     def remove_client(self, client_name):
-        for key, value in self.clients.iteritems():
+        for key, value in self.clients.items():
             if value == client_name:
                 # self.clients.remove(client_name)
+                print client_name
                 del self.clients[key]
+
             else:
                 print "Client not in channel"
+
 
     def remove_all(self):
         self.clients.clear()
@@ -251,7 +254,7 @@ class Channel:
 
     def send_message(self, member, message):
         for key, value in self.clients.iteritems():
-            msg = "Message from room " + self.name + ' member ' + member + ": " + message
+            msg = "Message from room " + self.name + ' member ' + member + ": " + message + "\n"
             key.send(msg)
 
 
@@ -266,70 +269,6 @@ class Chat:
         else:
             for r in self.rooms:
                 print(self.rooms[r].client)
-
-
-class Room:
-    def __init__(self, name):  # Default constructor
-        self.name = name  # Change later to pass in name from client in class declaration
-        self.sockets = []
-        self.memebers = []  # Holds the names of users who are in the chat room
-
-    def client_joined(self, a_client):
-        welcome_message = "Hello, " + a_client.name + "! Welcome to Room " + self.name + "!"
-
-    def choices(message, sclient, cList):
-        command = message.split()[0]
-        count = len(re.findall(r'\w+',message))
-        if command == "CREATE":
-            if count != 2:
-                output = "Invalid: input CREATE roomname"
-                # send to client
-                sclient.send(output)
-            else:
-                sender = "temp"
-                # create channel
-        elif command == "LEAVE":
-            if count != 2:
-                output = "Invalid: input LEAVE roomname"
-                sclient.send(output)
-            else:
-                cLeave = get_user_name(socket, cList)
-                leave(message.split()[1], cLeave, sclient,cList)
-        elif command == "DISCONNECT":
-            if count != 2:
-                output = "Invalid: input DISCONNECT roomname"
-                sclient.send(output)
-            else:
-                sender = "temp"
-
-        elif command == "JOIN":
-            if count == 2:
-                sender = "temp"
-                join(message.split()[1], sender, sclient,cList)
-                # join channel
-            else:
-                output = "Invalid: please input at least one room/channel to join"
-                sclient.send(output)
-        elif command == "LISTROOM":
-            if count != 1:
-                output = "Invalid: only input LISTROOM"
-                sclient.send(output)
-            else:
-                room_list = []
-                # list rooms
-                room_list(sclient,message.split()[1],cList)
-        elif command == "LISTMEM":
-            if count != 1:
-                output = "Invalid: input LISTMEMBERS roomname"
-                sclient.send(output)
-            else:
-                mem_list = []
-                member_list(sclient, message.split()[1], cList)
-        elif command == "MESSAGE":
-            c_mess(input, cList, sclient)
-        elif command == "SENDALL":
-            list
-
 
 def c_mess(input, cList, sclient):
     message = "temp"
@@ -418,56 +357,3 @@ def member_list(socket, cName,  cList):
         output = "Room to check members in does not exist"
         socket.send(output)
 
-
-
-
-'''
-# CURRENTLY UNUSED CODE
-
-# initialization total
-IT = ''
-
-# initialize client socket
-csock = []
-
-# number of clients
-numc = 2
-
-
-
-# accept from client
-for i in range(numc):
-    (client, ap) = server.accept()
-    client.setblocking(0)  # non-blocking if set to 0
-    csock.append(client)
-
-# loop, accepting from anyone
-while(len(csock) > 0):
-    client = csock.pop(0)
-    csock.append(client)
-    try:
-        check = client.recv(1)
-        if check =='':
-            client.close()
-            csock.remove(client)
-        IT += check
-        client.send(IT)
-    except: pass
-
-server.close()
-print 'Initialization Total is ', IT
-
-
-def shutdown(self):
-    os.kill(self.child_pid, signal.SIGTERM)
-    os.waitpid(self.child_pid, 0)
-    if self.state_dir:
-        try:
-            shutil.rmtree(self.state_dir)
-        except IOError:
-            pass
-
-'''
-'''def disconnect(clientList)
-    for c in clientList
-        if'''
