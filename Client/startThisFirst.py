@@ -192,8 +192,8 @@ if __name__ == "__main__":
 
     stuff = [sys.stdin, client.connection]
 
+    sys.stdout.write("\n{}@{}: ".format(user, channel))
     while 1:
-        sys.stdout.write("\n{}@{}: ".format(user, channel))
         something, y, z = select.select(stuff, [], [])
         for s in something:
             if s is client.connection:
