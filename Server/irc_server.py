@@ -200,18 +200,6 @@ class ServerMain:
         server.close()
 
 
-def create(name, client, socket, cList):
-    if c_exists(name, cList) == True:
-        output = "Room already exists. Joining channel %s..." % (name)
-        socket.send(output)
-        join(name, client, socket, cList)
-    else:
-        cList[name] = [[client, socket]]
-        output = "Created room name %s" % (name)
-        socket.send(output)
-        return cList
-
-
 class Channel:
     def __init__(self, name):
         self.name = name
