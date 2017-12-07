@@ -26,6 +26,7 @@ else: user = args.USER
 
 if args.debug: DEBUG = True
 
+
 #Class IRCClient modifed from https://raw.githubusercontent.com/bl4de/irc-client/master/irc_client.py
 class IRCClient:
 
