@@ -141,12 +141,14 @@ class ServerMain:
 
                         elif command == "JOIN":
                             if count == 2:
+                                found_room = False
                                 for c in self.room_list:
                                     if c.name == data.split()[1]:
                                         output = "Joining channel..."
                                         s.send(output)
                                         c.add_client(self.sockets[s], s)
-                                    else:
+                                        found_room = True
+                                    elif found_room == False:
                                         output = "No channel to join matching that name"
                                         s.send(output)
                                 # join channel
